@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h1>Ticket Details</h1>
+
+            <div id="ticketDetails"></div>
+
+            <h3>Update Status</h3>
+
+            <select id="status">
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Closed">Closed</option>
+            </select>
+
+            <textarea id="notes" placeholder="Add notes"></textarea>
+
+            <button onclick="updateTicket()">Update Ticket</button>
+
+        </div>
+
+    </div>
+
+<script>
+
+const API_URL = "http://127.0.0.1:8000";
+
+const ticket_id = localStorage.getItem("ticket_id");
+
+async function loadTicket() {
+
+    const response = await fetch(
+        `${API_URL}/api/tickets/${ticket_id}`
+    );
+
+    const ticket = await response.json();
+
+    document.getElementById("ticketDetails").innerHTML = `
+        <p><strong>Ticket ID:</strong> ${ticket.ticket_id}</p>
+        <p><strong>Name:</strong> ${ticket.customer_name}</p>
+        <p><strong>Email:</strong> ${ticket.customer_email}</p>
+        <p><strong>Subject:</strong> ${ticket.subject}</p>
+        <p><strong>Description:</strong> ${ticket.description}</p>
+        <p><strong>Status:</strong> ${ticket.status}</p>
+        <p><strong>Notes:</strong> ${ticket.notes}</p>
+    `;
+
+    document.getElementById("status").value = ticket.status;
+    document.getElementById("notes").value = ticket.notes;
+}
+
+async function updateTicket() {
+
+    const status = document.getElementById("status").value;
+    const notes = document.getElementById("notes").value;
+
+    await fetch(
+        `${API_URL}/api/tickets/${ticket_id}`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                status,
+                notes
+            })
+        }
+    );
+
+    alert("Ticket updated successfully");
+
+    loadTicket();
+}
+
+loadTicket();
+
+</script>
+
+</body>
+
+</html>
