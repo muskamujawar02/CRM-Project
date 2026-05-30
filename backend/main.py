@@ -13,8 +13,11 @@ from database import engine, SessionLocal
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
-app.mount("/frontend", StaticFiles(directory="../frontend"), name="frontend")
+@app.get("/")
+def home():
+    return FileResponse("frontend/index.html")
 
 @app.get("/")
 def home():
