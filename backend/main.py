@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,6 +13,12 @@ from database import engine, SessionLocal
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/frontend", StaticFiles(directory="../frontend"), name="frontend")
+
+@app.get("/")
+def home():
+    return FileResponse("../frontend/index.html")
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,7 +39,8 @@ def get_db():
 
 @app.get("/")
 def home():
-    return {"message": "Support CRM API Running"}
+    return FileResponse("frontend/index.html")
+
 
 @app.post("/api/tickets")
 def create_ticket(
