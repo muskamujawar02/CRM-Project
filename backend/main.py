@@ -19,10 +19,6 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 def home():
     return FileResponse("frontend/index.html")
 
-@app.get("/")
-def home():
-    return FileResponse("../frontend/index.html")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
